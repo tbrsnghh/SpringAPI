@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.prefix}/student")
@@ -49,30 +50,32 @@ public class StudentController {
         return ResponseEntity.ok(apiResponse);
     }
 
-//    @GetMapping("/list")
-//    public ResponseEntity<ApiResponse> getStudents(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "5") int size) {
-//
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-//        Page<StudentResponse> studentResponses = studentService.getAllStudentsPageable(pageable);
-//
-//        int totalPages = studentResponses.getTotalPages();
-//        List<Student> responses = studentResponses.getContent();
-//
-//        StudentListResponse studentListResponse = StudentListResponse.builder()
-//                .studentResponseList(responses)
-//                .totalPages(totalPages)
-//                .build();
-//
-//        ApiResponse apiResponse = ApiResponse.builder()
-//                .status(HttpStatus.OK.value())
-//                .message("show students successfully")
-//                .data(studentListResponse) // Đặt DataResponse vào data
-//                .build();
-//
-//        return ResponseEntity.ok(apiResponse);
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse> getStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Student> students = studentService.getAllStudentsPageable(pageable);
+
+        // Convert Student entities to StudentResponse DTOs
+        List<StudentResponse> responses = students.stream()
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
+
+        // Build the response object
+        StudentListResponse studentListResponse = StudentListResponse.builder()
+                .studentResponseList(responses)
+                .totalPages(students.getTotalPages())
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Students retrieved successfully")
+                .data(studentListResponse)
+                .build();
+
+        return ResponseEntity.ok(apiResponse);
+    }
 
     @PostMapping
     public ResponseEntity<ApiResponse> create(@Valid @RequestBody StudentDTO studentDTO, BindingResult bindingResult) {
@@ -142,7 +145,7 @@ public class StudentController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Student deleted successfully")
-                .data(null)
+                .data(id)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

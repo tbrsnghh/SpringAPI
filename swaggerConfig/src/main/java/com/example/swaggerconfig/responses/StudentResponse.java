@@ -14,18 +14,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class StudentResponse extends DataResponse{
     private long id;
-    private String name;
-    private String city;
-    private LocalDate dateOfBirth;
-    private String xeploai;
+    private String ten;
+    private String thanhpho;
+    private LocalDate ngsinh;
+    private String xepLoai;
     public static StudentResponse from(Student student) {
         StudentResponse studentResponse = StudentResponse.builder()
                 .id(student.getId())
-                .name(student.getTen())
-                .city(student.getThanhpho())
-                .dateOfBirth(student.getNgsinh())
-                .xeploai(String.valueOf(student.getXepLoai()))
+                .ten(student.getTen())
+                .thanhpho(student.getThanhpho())
+                .ngsinh(student.getNgsinh())
+                .xepLoai(String.valueOf(student.getXepLoai()))
                 .build();
+        studentResponse.setCreateAt(student.getCreatedAt());
+        studentResponse.setUpdatedAt(student.getUpdatedAt());
         return studentResponse;
     }
 }

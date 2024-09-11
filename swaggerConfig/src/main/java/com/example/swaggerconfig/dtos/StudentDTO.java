@@ -24,7 +24,7 @@ public class StudentDTO {
     @NotBlank(message = "Thành phố không được để trống")
     private String thanhpho;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Past(message = "Ngày trong quá khứ!")
     private LocalDate ngsinh;
 

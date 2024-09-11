@@ -27,7 +27,7 @@ public class Student extends BaseEntity{
     @NotBlank(message = "Thanh pho khong dc de trong")
     private String thanhpho;
 
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Past(message = "Bạn phải đẻ hồi xưa!")
     private LocalDate ngsinh;
 
