@@ -1,14 +1,17 @@
 package com.example.swaggerconfig.controllers;
 
 import com.example.swaggerconfig.dtos.StudentDTO;
+import com.example.swaggerconfig.dtos.StudentImageDTO;
 import com.example.swaggerconfig.exceptions.ResourceNotFoundException;
 import com.example.swaggerconfig.models.Student;
+import com.example.swaggerconfig.models.StudentImage;
 import com.example.swaggerconfig.repositories.StudentRepository;
 import com.example.swaggerconfig.responses.ApiResponse;
 import com.example.swaggerconfig.responses.DataResponse;
 import com.example.swaggerconfig.responses.StudentListResponse;
 import com.example.swaggerconfig.responses.StudentResponse;
 import com.example.swaggerconfig.services.StudentService;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,12 +20,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -181,5 +192,40 @@ public class StudentController {
                 .data(students)
                 .build();
         return ResponseEntity.ok(apiResponse);
+    }
+    @GetMapping("/getAllImages/{id}")
+    public ResponseEntity<ApiResponse> imgs(@PathVariable Long id) {
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(studentService.getAllStudentImages(id))
+                .message("Get images successful.")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+    @PostMapping("/uploads/{id}")
+    public ResponseEntity<ApiResponse> uploads(@PathVariable Long id,@ModelAttribute MultipartFile file)
+            throws IOException {
+        String fileName = storeFile(file);
+        StudentImageDTO studentImageDTO = StudentImageDTO.builder()
+                .imageUrl(fileName)
+                .build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("Upload successfully")
+                .data(studentService.saveStudentImage(id, studentImageDTO))
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    private String storeFile(MultipartFile file) throws IOException {
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String uniqueFileName =UUID.randomUUID().toString()+"_"+ fileName;
+        java.nio.file.Path uploadDdir= Paths.get( "upload");
+        if(!Files.exists(uploadDdir)) {
+                Files.createDirectory(uploadDdir);
+        }
+        java.nio.file.Path destination = Paths.get(uploadDdir.toString(), uniqueFileName);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        return uniqueFileName;
     }
 }

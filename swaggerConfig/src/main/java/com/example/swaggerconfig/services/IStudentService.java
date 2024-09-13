@@ -1,7 +1,9 @@
 package com.example.swaggerconfig.services;
 
 import com.example.swaggerconfig.dtos.StudentDTO;
+import com.example.swaggerconfig.dtos.StudentImageDTO;
 import com.example.swaggerconfig.models.Student;
+import com.example.swaggerconfig.models.StudentImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +20,6 @@ public interface IStudentService {
     List<Student> findByTenContainingIgnoreCase(String ten);
     List<Student> findByThanhPho(String name);
     List<Student> findByThanhPhoVaTen(String name);
+    StudentImage saveStudentImage(long studentId, StudentImageDTO studentImageDTO);
+    List<StudentImage> getAllStudentImages(Long studentId);
 }

@@ -1,8 +1,11 @@
 package com.example.swaggerconfig.services;
 
 import com.example.swaggerconfig.dtos.StudentDTO;
+import com.example.swaggerconfig.dtos.StudentImageDTO;
 import com.example.swaggerconfig.models.Student;
+import com.example.swaggerconfig.models.StudentImage;
 import com.example.swaggerconfig.models.XepLoai;
+import com.example.swaggerconfig.repositories.StudentImageRepository;
 import com.example.swaggerconfig.repositories.StudentRepository;
 import com.example.swaggerconfig.responses.StudentResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudentService implements IStudentService {
     private final StudentRepository studentRepository;
+    private final StudentImageRepository studentImageRepository;
     @Override
     public List<Student> findByThanhPho(String name) {
         return studentRepository.findByThanhPho(name);
@@ -24,6 +28,21 @@ public class StudentService implements IStudentService {
     @Override
     public List<Student> findByThanhPhoVaTen(String name) {
         return studentRepository.findByThanhPhoVaTen(name);
+    }
+
+    @Override
+    public StudentImage saveStudentImage(long studentId, StudentImageDTO studentImageDTO) {
+        Student student = getStudentById(studentId);
+        StudentImage studentImage = StudentImage.builder()
+                .student(student)
+                .imageUrl(studentImageDTO.getImageUrl())
+                .build();
+        return studentImageRepository.save(studentImage);
+    }
+
+    @Override
+    public List<StudentImage> getAllStudentImages(Long studentId) {
+        return studentImageRepository.findByStudentId(studentId);
     }
 
     public List<Student> getAllStudents() {
@@ -68,4 +87,5 @@ public class StudentService implements IStudentService {
     public List<Student> findByTenContainingIgnoreCase(String name) {
         return studentRepository.findByTenContainingIgnoreCase(name);
     }
+
 }
