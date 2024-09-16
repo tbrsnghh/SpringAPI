@@ -30,21 +30,6 @@ public class StudentService implements IStudentService {
         return studentRepository.findByThanhPhoVaTen(name);
     }
 
-    @Override
-    public StudentImage saveStudentImage(long studentId, StudentImageDTO studentImageDTO) {
-        Student student = getStudentById(studentId);
-        StudentImage studentImage = StudentImage.builder()
-                .student(student)
-                .imageUrl(studentImageDTO.getImageUrl())
-                .build();
-        return studentImageRepository.save(studentImage);
-    }
-
-    @Override
-    public List<StudentImage> getAllStudentImages(Long studentId) {
-        return studentImageRepository.findByStudentId(studentId);
-    }
-
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
@@ -87,5 +72,17 @@ public class StudentService implements IStudentService {
     public List<Student> findByTenContainingIgnoreCase(String name) {
         return studentRepository.findByTenContainingIgnoreCase(name);
     }
-
+    @Override
+    public StudentImage saveStudentImage(long studentId, StudentImageDTO studentImageDTO) {
+        Student student = getStudentById(studentId);
+        StudentImage studentImage = StudentImage.builder()
+                .student(student)
+                .imageUrl(studentImageDTO.getImageUrl())
+                .build();
+        return studentImageRepository.save(studentImage);
+    }
+    @Override
+    public List<StudentImage> getAllStudentImages(Long studentId) {
+        return studentImageRepository.findByStudentId(studentId);
+    }
 }

@@ -202,30 +202,34 @@ public class StudentController {
                 .build();
         return ResponseEntity.ok(apiResponse);
     }
-    @PostMapping("/uploads/{id}")
-    public ResponseEntity<ApiResponse> uploads(@PathVariable Long id,@ModelAttribute MultipartFile file)
-            throws IOException {
-        String fileName = storeFile(file);
+    @PostMapping(value = "/uploads/{id}")
+    public ResponseEntity<ApiResponse> uploads(@PathVariable Long id,@RequestParam @ModelAttribute("files") MultipartFile files) throws IOException {
+        String fileName = storeFile(files);
         StudentImageDTO studentImageDTO = StudentImageDTO.builder()
                 .imageUrl(fileName)
                 .build();
+
         ApiResponse apiResponse = ApiResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Upload successfully")
                 .data(studentService.saveStudentImage(id, studentImageDTO))
                 .build();
+
         return ResponseEntity.ok(apiResponse);
     }
 
     private String storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String uniqueFileName =UUID.randomUUID().toString()+"_"+ fileName;
-        java.nio.file.Path uploadDdir= Paths.get( "upload");
-        if(!Files.exists(uploadDdir)) {
-                Files.createDirectory(uploadDdir);
+        String uniqueFileName = UUID.randomUUID().toString() + "-" + fileName;
+        java.nio.file.Path uploadDir = Paths.get("upload");
+
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectory(uploadDir);
         }
-        java.nio.file.Path destination = Paths.get(uploadDdir.toString(), uniqueFileName);
+
+        java.nio.file.Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+
         return uniqueFileName;
     }
 }
