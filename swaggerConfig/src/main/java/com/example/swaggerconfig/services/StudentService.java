@@ -20,19 +20,6 @@ import java.util.List;
 public class StudentService implements IStudentService {
     private final StudentRepository studentRepository;
     private final StudentImageRepository studentImageRepository;
-    @Override
-    public List<Student> findByThanhPho(String name) {
-        return studentRepository.findByThanhPho(name);
-    }
-
-    @Override
-    public List<Student> findByThanhPhoVaTen(String name) {
-        return studentRepository.findByThanhPhoVaTen(name);
-    }
-
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
 
     @Override
     public Page<Student> getAllStudentsPageable(Pageable pageable) {
@@ -84,5 +71,29 @@ public class StudentService implements IStudentService {
     @Override
     public List<StudentImage> getAllStudentImages(Long studentId) {
         return studentImageRepository.findByStudentId(studentId);
+    }
+
+    @Override
+    public StudentImage getStudentImageById(Long studentImageId) {
+        return studentImageRepository.findById(studentImageId).orElse(null);
+    }
+
+    @Override
+    public void deleteStudentImageById(Long studentImageId) {
+        studentImageRepository.deleteById(studentImageId);
+    }
+
+    @Override
+    public List<Student> findByThanhPho(String name) {
+        return studentRepository.findByThanhPho(name);
+    }
+
+    @Override
+    public List<Student> findByThanhPhoVaTen(String name) {
+        return studentRepository.findByThanhPhoVaTen(name);
+    }
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
     }
 }

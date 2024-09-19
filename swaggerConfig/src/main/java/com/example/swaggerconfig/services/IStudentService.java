@@ -22,4 +22,6 @@ public interface IStudentService {
     List<Student> findByThanhPhoVaTen(String name);
     StudentImage saveStudentImage(long studentId, StudentImageDTO studentImageDTO);
     List<StudentImage> getAllStudentImages(Long studentId);
+    StudentImage getStudentImageById(Long studentImageId);
+    void deleteStudentImageById(Long studentImageId);
 }
